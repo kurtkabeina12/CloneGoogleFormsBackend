@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ComponentType {
  Input = 'Input',
@@ -9,7 +10,15 @@ export enum ComponentType {
  Data = 'Data',
 }
 
+@Entity()
 export class Card {
+ @PrimaryGeneratedColumn() 
+ id: number;
+
+ @Column({
+    type: 'enum',
+    enum: ComponentType,
+ })
  @ApiProperty({
     enum: ComponentType,
     enumName: 'ComponentType',
@@ -17,12 +26,17 @@ export class Card {
  })
  selectedComponent: ComponentType;
 
+ @Column()
  @ApiProperty()
  question: string;
 
- @ApiProperty()
- isRequired: boolean;
-
+ @Column({
+    type: 'simple-array', 
+ })
  @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
  answer: string | string[];
+
+ @Column({ default: false })
+ @ApiProperty()
+ isRequired: boolean;
 }
