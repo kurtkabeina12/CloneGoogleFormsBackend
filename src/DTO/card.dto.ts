@@ -1,42 +1,48 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Form } from './form.dto';
 
 export enum ComponentType {
- Input = 'Input',
- Radio = 'Radio',
- Textarea = 'Textarea',
- Checkbox = 'Checkbox',
- Slider = 'Slider',
- Data = 'Data',
+   Input = 'Input',
+   Radio = 'Radio',
+   Textarea = 'Textarea',
+   Checkbox = 'Checkbox',
+   Slider = 'Slider',
+   Data = 'Data',
 }
 
 @Entity()
 export class Card {
- @PrimaryGeneratedColumn() 
- id: number;
 
- @Column({
-    type: 'enum',
-    enum: ComponentType,
- })
- @ApiProperty({
-    enum: ComponentType,
-    enumName: 'ComponentType',
-    example: Object.values(ComponentType),
- })
- selectedComponent: ComponentType;
+   @PrimaryGeneratedColumn()
+   id: number
 
- @Column()
- @ApiProperty()
- question: string;
+   @Column({
+      type: 'enum',
+      enum: ComponentType,
+   })
+   @ApiProperty({
+      enum: ComponentType,
+      enumName: 'ComponentType',
+      example: Object.values(ComponentType),
+   })
+   selectedComponent: ComponentType;
 
- @Column({
-    type: 'simple-array', 
- })
- @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
- answer: string | string[];
+   @Column()
+   @ApiProperty()
+   question: string;
 
- @Column({ default: false })
- @ApiProperty()
- isRequired: boolean;
+   @Column({
+      type: 'simple-array',
+   })
+   @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
+   answer: string | string[];
+
+   @Column({ default: false })
+   @ApiProperty()
+   isRequired: boolean;
+
+   @ManyToOne(() => Form, form => form.cards)
+   @ApiProperty()
+   form: Form;
 }
