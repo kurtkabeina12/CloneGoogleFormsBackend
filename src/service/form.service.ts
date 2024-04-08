@@ -1,9 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Card } from 'src/DTO/card.dto';
 import { Form } from 'src/DTO/form.dto';
 import { Repository } from 'typeorm';
-import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 
 @Injectable()
 export class FormsService {

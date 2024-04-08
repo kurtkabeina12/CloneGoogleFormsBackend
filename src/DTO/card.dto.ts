@@ -1,5 +1,6 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+/* eslint-disable prettier/prettier */
+import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Form } from './form.dto';
 
 export enum ComponentType {
@@ -36,11 +37,21 @@ export class Card {
       type: 'simple-array',
    })
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
-   answer: string | string[];
+   answer:  string | string[];
 
    @Column({ default: false })
    @ApiProperty()
    isRequired: boolean;
+
+   @Column({default: false })
+   @ApiProperty()
+   addLogic: boolean;
+
+   @Column({
+      type: 'simple-array',
+   })
+   @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
+   Logic:  string | string[];
 
    @ManyToOne(() => Form, form => form.cards)
    @ApiProperty()
