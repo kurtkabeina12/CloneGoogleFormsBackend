@@ -12,9 +12,9 @@ export class FormsController {
 
    @Post()
    @ApiBody({ type: [Card] })
-   async saveForm(@Body() body: { formHead: string, formBody: Card[] }): Promise<any> {
-      const { formHead, formBody } = body;
-      const formId = await this.formsService.saveForm(formHead, formBody);
+   async saveForm(@Body() body: { formHead: string, formBody: Card[], isMandatoryAuth: boolean }): Promise<any> {
+      const { formHead, formBody, isMandatoryAuth } = body;
+      const formId = await this.formsService.saveForm(formHead, formBody, isMandatoryAuth);
       return { formId };
    }
 

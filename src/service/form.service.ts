@@ -14,10 +14,10 @@ export class FormsService {
       private cardRepository: Repository<Card>,
    ) { }
 
-   async saveForm(formHead: string, cards: Card[]): Promise<{ formId: number }> {
+   async saveForm(formHead: string, cards: Card[], isMandatoryAuth:boolean,): Promise<{ formId: number }> {
       const form = new Form();
       form.formHeader = formHead;
-
+      form.isMandatoryAuth = isMandatoryAuth;
       const savedForm = await this.formRepository.save(form);
 
       for (const card of cards) {

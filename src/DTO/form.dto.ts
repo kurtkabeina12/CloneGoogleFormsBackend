@@ -12,6 +12,10 @@ export class Form {
  @ApiProperty()
  formHeader: string;
 
+ @Column()
+ @ApiProperty()
+ isMandatoryAuth: boolean;
+
  @OneToMany(() => Card, card => card.form)
  @ApiProperty()
  cards: Card[];
