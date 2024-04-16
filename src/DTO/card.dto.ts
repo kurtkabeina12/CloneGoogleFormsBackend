@@ -56,4 +56,6 @@ export class Card {
    @ManyToOne(() => Form, form => form.cards)
    @ApiProperty()
    form: Form;
+
+   
 }

@@ -16,4 +16,5 @@ export class Questions {
   // Отношение к ответам
   @OneToMany(() => Answers, answer => answer.question)
   answers: Answers[];
+  
 }

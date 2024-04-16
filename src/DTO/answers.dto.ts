@@ -16,10 +16,6 @@ export class Answers {
 
     @Column()
     @ApiProperty()
-    idQuestion: string;
-
-    @Column()
-    @ApiProperty()
     idForm: string;
 
     // Отношение к Users
