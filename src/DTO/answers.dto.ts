@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Users } from "./users.dto";
 
@@ -17,8 +17,15 @@ export class Answers {
     @ApiProperty()
     idForm: string;
 
+    @Column()
+    @ApiProperty()
+    idQuestion: string;
+
     // Отношение к Users
-    @ManyToOne(() => Users, user => user.answers)
+    @ManyToOne(() => Users, user => user.answers, {
+        createForeignKeyConstraints: false,
+    })
+    @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: Users;
 
     @Column('simple-array')
