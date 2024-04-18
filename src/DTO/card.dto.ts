@@ -15,8 +15,8 @@ export enum ComponentType {
 @Entity()
 export class Card {
 
-   @PrimaryGeneratedColumn()
-   id: number
+   @PrimaryGeneratedColumn('uuid')
+   idQuestion: string
 
    @Column({
       type: 'enum',
@@ -37,13 +37,13 @@ export class Card {
       type: 'simple-array',
    })
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
-   answer:  string | string[];
+   answer: string | string[];
 
    @Column({ default: false })
    @ApiProperty()
    isRequired: boolean;
 
-   @Column({default: false })
+   @Column({ default: false })
    @ApiProperty()
    addLogic: boolean;
 
@@ -51,11 +51,10 @@ export class Card {
       type: 'simple-array',
    })
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
-   Logic:  string | string[];
+   Logic: string | string[];
 
    @ManyToOne(() => Form, form => form.cards)
    @ApiProperty()
    form: Form;
 
-   
 }

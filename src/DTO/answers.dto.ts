@@ -2,7 +2,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Users } from "./users.dto";
-import { Questions } from "./questions.dto";
 
 @Entity()
 export class Answers {
@@ -21,10 +20,6 @@ export class Answers {
     // Отношение к Users
     @ManyToOne(() => Users, user => user.answers)
     user: Users;
-
-    // Отношение к Questions
-    @ManyToOne(() => Questions, question => question.answers)
-    question: Questions;
 
     @Column('simple-array')
     @ApiProperty({ type: () => [String] })

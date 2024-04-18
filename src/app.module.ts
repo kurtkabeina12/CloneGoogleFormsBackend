@@ -5,11 +5,8 @@ import { FormsService } from './service/form.service';
 import { Card } from './DTO/card.dto';
 import { FormsController } from './controllers/forms.controller';
 import { Form } from './DTO/form.dto';
-import { Questions } from './DTO/questions.dto';
 import { Answers } from './DTO/answers.dto';
 import { Users } from './DTO/users.dto';
-import { QuestionsController } from './controllers/question.controller';
-import { QuestionsService } from './service/question.service';
 import { getFormDataController } from './controllers/getFormData.controller';
 import { getFormsDataService } from './service/getFormData.service';
 
@@ -21,13 +18,13 @@ import { getFormsDataService } from './service/getFormData.service';
       port: 5000,
       password: '122712',
       username: 'postgres',
-      entities: [Card, Form, Questions, Answers, Users], 
+      entities: [Card, Form, Answers, Users], 
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Card, Form, Questions, Answers, Users]), 
+    TypeOrmModule.forFeature([Card, Form, Answers, Users]), 
  ],
- controllers: [FormsController, QuestionsController, getFormDataController],
- providers: [FormsService, QuestionsService, getFormsDataService],
+ controllers: [FormsController, getFormDataController],
+ providers: [FormsService, getFormsDataService],
 })
 export class AppModule {}
