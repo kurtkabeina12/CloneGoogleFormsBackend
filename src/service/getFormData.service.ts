@@ -2,6 +2,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Answers } from "src/DTO/answers.dto";
+import { Card } from "src/DTO/card.dto";
 import { Users } from "src/DTO/users.dto";
 import { Repository } from "typeorm";
 
@@ -13,6 +14,9 @@ export class getFormsDataService {
 
         @InjectRepository(Answers)
         private answersRepository: Repository<Answers>,
+        
+        @InjectRepository(Card)
+        private cardsRepository: Repository<Card>,
     ) { }
 
     async savePhoneNumber(phoneNumber: string): Promise<Users> {
@@ -42,6 +46,26 @@ export class getFormsDataService {
                 await this.answersRepository.save(answerEntity);
             }
         }
+    }
+
+    async getUserQuestionsAndAnswers(userId: number): Promise<any> {
+        const userQuestionsAndAnswers = await this.answersRepository
+            .createQueryBuilder("answers")
+            .leftJoinAndSelect("answers.user", "user")
+            .leftJoinAndSelect("answers.card", "card")
+            .where("user.id = :userId", { userId })
+            .select([
+                "answers.idAnswer",
+                "answers.phoneNumber",
+                "answers.idQuestion",
+                "answers.answers",
+                "user.phoneNumber",
+                "card.question"
+            ])
+            .getMany();
+    
+        console.log(userQuestionsAndAnswers);
+        return userQuestionsAndAnswers;
     }
 }
 

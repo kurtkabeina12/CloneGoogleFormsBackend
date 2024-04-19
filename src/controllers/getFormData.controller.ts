@@ -16,7 +16,7 @@ export class getFormDataController {
         const formId = body.formId;
         await this.formsDataService.savePhoneNumber(registerPhone);
         await this.formsDataService.saveAnswers(formData, formId);
+        await this.formsDataService.getUserQuestionsAndAnswers(1);
         return { message: 'Data received successfully' };
     }
- 
 }

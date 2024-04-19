@@ -2,6 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Users } from "./users.dto";
+import { Card } from "./card.dto";
 
 @Entity()
 export class Answers {
@@ -27,6 +28,12 @@ export class Answers {
     })
     @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: Users;
+
+    // In Answers entity
+    @ManyToOne(() => Card, card => card.answers)
+    @JoinColumn({ name: 'idQuestion' }) // Assuming 'idQuestion' is the foreign key in Answers that references 'idQuestion' in Card
+    card: Card;
+
 
     @Column('simple-array')
     @ApiProperty({ type: () => [String] })
