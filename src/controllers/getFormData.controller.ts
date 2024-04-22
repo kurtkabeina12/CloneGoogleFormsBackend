@@ -11,12 +11,10 @@ export class getFormDataController {
     @Post()
     async handleFormData(@Body() body: any) {
         console.log(body, 'Received form data');
-        const formData = body.formData;
-        const { registerPhone } = formData;
-        const formId = body.formId;
-        await this.formsDataService.savePhoneNumber(registerPhone);
-        await this.formsDataService.saveAnswers(formData, formId);
-        await this.formsDataService.getUserQuestionsAndAnswers(1);
+        // const formData = body.formData;
+        // const formId = body.formId;
+        // await this.formsDataService.saveAnswers(formData, formId);
+        // await this.formsDataService.getUserQuestionsAndAnswers(1);
         return { message: 'Data received successfully' };
     }
 }

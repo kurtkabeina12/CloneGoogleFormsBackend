@@ -10,7 +10,7 @@ export class Answers {
     @PrimaryGeneratedColumn()
     idAnswer: number;
 
-    @Column()
+    @Column({ nullable: true })
     @ApiProperty()
     phoneNumber: string;
 
@@ -31,7 +31,7 @@ export class Answers {
 
     // In Answers entity
     @ManyToOne(() => Card, card => card.answers)
-    @JoinColumn({ name: 'idQuestion' }) // Assuming 'idQuestion' is the foreign key in Answers that references 'idQuestion' in Card
+    @JoinColumn({ name: 'idQuestion' }) 
     card: Card;
 
 

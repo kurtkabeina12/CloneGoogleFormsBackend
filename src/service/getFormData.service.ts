@@ -8,64 +8,78 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class getFormsDataService {
-    constructor(
-        @InjectRepository(Users)
-        private usersRepository: Repository<Users>,
+	constructor(
+		@InjectRepository(Users)
+		private usersRepository: Repository<Users>,
 
-        @InjectRepository(Answers)
-        private answersRepository: Repository<Answers>,
-        
-        @InjectRepository(Card)
-        private cardsRepository: Repository<Card>,
-    ) { }
+		@InjectRepository(Answers)
+		private answersRepository: Repository<Answers>,
 
-    async savePhoneNumber(phoneNumber: string): Promise<Users> {
-        const user = this.usersRepository.create({ phoneNumber });
-        return this.usersRepository.save(user);
-    }
+		@InjectRepository(Card)
+		private cardsRepository: Repository<Card>,
+	) { }
 
-    async saveAnswers(formData: any, formId: string): Promise<void> {
-        const { registerPhone } = formData;
-        let user = await this.usersRepository.findOne({ where: { phoneNumber: registerPhone } });
+	async savePhoneNumber(phoneNumber: string): Promise<Users> {
+		const user = this.usersRepository.create({ phoneNumber });
+		return this.usersRepository.save(user);
+	}
 
-        if (!user) {
-            user = this.usersRepository.create({ phoneNumber: registerPhone });
-            await this.usersRepository.save(user);
-        }
+	async saveAnswers(formData: any, formId: string): Promise<void> {
+		const { registerPhone } = formData;
 
-        for (const [idQuestion, answer] of Object.entries(formData)) {
-            if (idQuestion !== 'registerPhone') {
-                const answerEntity = this.answersRepository.create({
-                    phoneNumber: registerPhone,
-                    idForm: formId,
-                    user: user,
-                    idQuestion: idQuestion,
-                    answers: Array.isArray(answer) ? answer : [answer] 
-                });
+		if (registerPhone) {
+			await this.savePhoneNumber(registerPhone)
+			let user = await this.usersRepository.findOne({ where: { phoneNumber: registerPhone } });
 
-                await this.answersRepository.save(answerEntity);
-            }
-        }
-    }
+			if (!user) {
+				user = this.usersRepository.create({ phoneNumber: registerPhone });
+				await this.usersRepository.save(user);
+			}
 
-    async getUserQuestionsAndAnswers(userId: number): Promise<any> {
-        const userQuestionsAndAnswers = await this.answersRepository
-            .createQueryBuilder("answers")
-            .leftJoinAndSelect("answers.user", "user")
-            .leftJoinAndSelect("answers.card", "card")
-            .where("user.id = :userId", { userId })
-            .select([
-                "answers.idAnswer",
-                "answers.phoneNumber",
-                "answers.idQuestion",
-                "answers.answers",
-                "user.phoneNumber",
-                "card.question"
-            ])
-            .getMany();
-    
-        console.log(userQuestionsAndAnswers);
-        return userQuestionsAndAnswers;
-    }
+			for (const [idQuestion, answer] of Object.entries(formData)) {
+				if (idQuestion !== 'registerPhone') {
+					const answerEntity = this.answersRepository.create({
+						phoneNumber: registerPhone,
+						idForm: formId,
+						user: user,
+						idQuestion: idQuestion,
+						answers: Array.isArray(answer) ? answer : [answer]
+					});
+
+					await this.answersRepository.save(answerEntity);
+				}
+			}
+		} else {
+			for (const [idQuestion, answer] of Object.entries(formData)) {
+				const answerEntity = this.answersRepository.create({
+					idForm: formId,
+					idQuestion: idQuestion,
+					answers: Array.isArray(answer) ? answer : [answer]
+				});
+
+				await this.answersRepository.save(answerEntity);
+			}
+		}
+	}
+
+	async getUserQuestionsAndAnswers(userId: number): Promise<any> {
+		const userQuestionsAndAnswers = await this.answersRepository
+			.createQueryBuilder("answers")
+			.leftJoinAndSelect("answers.user", "user")
+			.leftJoinAndSelect("answers.card", "card")
+			.where("user.id = :userId", { userId })
+			.select([
+				"answers.idAnswer",
+				"answers.phoneNumber",
+				"answers.idQuestion",
+				"answers.answers",
+				"user.phoneNumber",
+				"card.question"
+			])
+			.getMany();
+
+		console.log(userQuestionsAndAnswers);
+		return userQuestionsAndAnswers;
+	}
 }
 
