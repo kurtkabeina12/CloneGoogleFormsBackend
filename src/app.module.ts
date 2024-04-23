@@ -9,6 +9,8 @@ import { Answers } from './DTO/answers.dto';
 import { Users } from './DTO/users.dto';
 import { getFormDataController } from './controllers/getFormData.controller';
 import { getFormsDataService } from './service/getFormData.service';
+import { getFormsController } from './controllers/getForms.controller';
+import { getFormsService } from './service/getForms.service';
 
 @Module({
  imports: [
@@ -24,7 +26,7 @@ import { getFormsDataService } from './service/getFormData.service';
     }),
     TypeOrmModule.forFeature([Card, Form, Answers, Users]), 
  ],
- controllers: [FormsController, getFormDataController],
- providers: [FormsService, getFormsDataService],
+ controllers: [FormsController, getFormDataController, getFormsController],
+ providers: [FormsService, getFormsDataService, getFormsService],
 })
 export class AppModule {}

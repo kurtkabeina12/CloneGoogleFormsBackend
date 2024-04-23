@@ -19,7 +19,7 @@ export class FormsController {
    }
 
    @Get(':id')
-   async getForm(@Param('id') formId: number): Promise<Form> {
+   async getForm(@Param('id') formId: string): Promise<Form> {
       return this.formsService.getFormWithCards(formId);
    }
 

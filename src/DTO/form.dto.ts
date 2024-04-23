@@ -6,7 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 @Entity()
 export class Form {
  @PrimaryGeneratedColumn('uuid')
- id: number;
+ id: string;
 
  @Column()
  @ApiProperty()

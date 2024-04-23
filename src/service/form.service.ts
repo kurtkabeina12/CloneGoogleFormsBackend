@@ -14,7 +14,7 @@ export class FormsService {
       private cardRepository: Repository<Card>,
    ) { }
 
-   async saveForm(formHead: string, cards: Card[], isMandatoryAuth:boolean,): Promise<{ formId: number }> {
+   async saveForm(formHead: string, cards: Card[], isMandatoryAuth:boolean,): Promise<{ formId: string }> {
       const form = new Form();
       form.formHeader = formHead;
       form.isMandatoryAuth = isMandatoryAuth;
@@ -24,10 +24,10 @@ export class FormsService {
          card.form = savedForm;
          await this.cardRepository.save(card);
       }
-      return { formId: savedForm.id };
+      return { formId: String(savedForm.id) };
    }
 
-   async getFormWithCards(formId: number): Promise<Form> {
+   async getFormWithCards(formId: string): Promise<Form> {
       return this.formRepository
          .createQueryBuilder('form')
          .leftJoinAndSelect('form.cards', 'card')

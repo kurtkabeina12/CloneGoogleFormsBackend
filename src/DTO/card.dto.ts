@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne,   OneToMany,   PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Form } from './form.dto';
 import { Answers } from './answers.dto';
 
@@ -53,13 +53,13 @@ export class Card {
    })
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
    Logic: string | string[];
-   
+
    @ManyToOne(() => Form, form => form.cards)
    @ApiProperty()
    form: Form;
 
    // In Card entity
-@OneToMany(() => Answers, answers => answers.card)
-answers: Answers[];
+   @OneToMany(() => Answers, answers => answers.card)
+   answers: Answers[];
 
 }
