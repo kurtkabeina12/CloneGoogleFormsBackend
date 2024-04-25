@@ -48,13 +48,22 @@ export class getFormsService {
             where: { idForm: formId },
             select: ["idQuestion", "answers"]
         });
-        console.log(answers)
-    
+
+        const AllAnswers = await this.cardsRepository
+            .createQueryBuilder("card")
+            .where("card.form = :formId", { formId: formId })
+            .andWhere("(card.selectedComponent = 'Radio' OR card.selectedComponent = 'Checkbox')")
+            .select(["card.idQuestion", "card.answer", "card.selectedComponent"])
+            .getMany();
+
+        console.log(AllAnswers)
+
         return {
             form,
             questions,
-            answers
+            answers,
+            AllAnswers
         };
     }
-    
+
 }

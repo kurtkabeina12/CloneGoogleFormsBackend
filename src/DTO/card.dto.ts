@@ -54,6 +54,14 @@ export class Card {
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
    Logic: string | string[];
 
+   @Column({ default: false})
+   @ApiProperty()
+   addImg: boolean;
+
+   @Column()
+   @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
+   imageUrl: string ;
+
    @ManyToOne(() => Form, form => form.cards)
    @ApiProperty()
    form: Form;

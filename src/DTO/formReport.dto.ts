@@ -11,7 +11,10 @@ export class FormReportDTO {
 
     @ApiProperty()
     questions: Card[];
-
+    
     @ApiProperty()
     answers: Answers[];
+    
+    @ApiProperty()
+    AllAnswers: Card[];
 }

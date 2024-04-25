@@ -16,6 +16,10 @@ export class Form {
  @ApiProperty()
  isMandatoryAuth: boolean;
 
+ @Column()
+ @ApiProperty()
+ selectedColor: string;
+
  @OneToMany(() => Card, card => card.form)
  @ApiProperty()
  cards: Card[];

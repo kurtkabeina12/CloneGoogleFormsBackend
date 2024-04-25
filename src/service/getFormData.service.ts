@@ -26,24 +26,26 @@ export class getFormsDataService {
 
 	async saveAnswers(formData: any, formId: string): Promise<void> {
 		const { registerPhone } = formData;
-
+	
 		if (registerPhone) {
 			await this.savePhoneNumber(registerPhone)
 			let user = await this.usersRepository.findOne({ where: { phoneNumber: registerPhone } });
-
+	
 			if (!user) {
 				user = this.usersRepository.create({ phoneNumber: registerPhone });
 				await this.usersRepository.save(user);
 			}
-
+	
 			for (const [idQuestion, answer] of Object.entries(formData)) {
 				if (idQuestion !== 'registerPhone') {
+					const filteredAnswers = Array.isArray(answer) ? answer.filter(a => a !== "null" && a !== null) : [answer];
+
 					const answerEntity = this.answersRepository.create({
 						phoneNumber: registerPhone,
 						idForm: formId,
 						user: user,
 						idQuestion: idQuestion,
-						answers: Array.isArray(answer) ? answer : [answer]
+						answers: filteredAnswers
 					});
 
 					await this.answersRepository.save(answerEntity);
@@ -51,10 +53,12 @@ export class getFormsDataService {
 			}
 		} else {
 			for (const [idQuestion, answer] of Object.entries(formData)) {
+				const filteredAnswers = Array.isArray(answer) ? answer.filter(a => a !== "null" && a !== null) : [answer];
+	
 				const answerEntity = this.answersRepository.create({
 					idForm: formId,
 					idQuestion: idQuestion,
-					answers: Array.isArray(answer) ? answer : [answer]
+					answers: filteredAnswers
 				});
 
 				await this.answersRepository.save(answerEntity);
