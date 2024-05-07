@@ -1,48 +1,94 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Card } from 'src/DTO/card.dto';
 import { Form } from 'src/DTO/form.dto';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Section } from 'src/DTO/section.dto';
+import { Card } from 'src/DTO/card.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { subQuestions } from 'src/DTO/subQuestion.dto';
 
 @Injectable()
 export class FormsService {
    constructor(
       @InjectRepository(Form)
       private formRepository: Repository<Form>,
+      @InjectRepository(Section)
+      private sectionRepository: Repository<Section>,
       @InjectRepository(Card)
       private cardRepository: Repository<Card>,
+      @InjectRepository(subQuestions)
+      private subQuestionRepository: Repository<subQuestions>,
    ) { }
 
-   async saveForm(formHead: string, cards: Card[], isMandatoryAuth: boolean, selectedColor:string): Promise<{ formId: string }> {
-      console.log(formHead, cards, isMandatoryAuth, 'бекенд');
+   async saveForm(formTitle: string, formOverview: string, formEndText: string, formEndDate: string, formBody: Section[], isMandatoryAuth: boolean, selectedColor: string): Promise<{ formId: string }> {
       const form = new Form();
-      form.formHeader = formHead;
+      form.formTitle = formTitle;
+      form.formOverview = formOverview;
+      form.formEndText = formEndText;
+      form.formEndDate = formEndDate;
       form.isMandatoryAuth = isMandatoryAuth;
       form.selectedColor = selectedColor;
       const savedForm = await this.formRepository.save(form);
 
-      for (const card of cards) {
-         card.form = savedForm;
-         console.log(card, 'card')
-         if (card.addImg) {
-            // Сохраняем изображение и получаем путь к нему
-            const imagePath = await this.saveImage(card.imageUrl, savedForm.id);
-            // Обновляем card.imageUrl с путем к изображению
-            card.imageUrl = imagePath;
+      for (const sectionData of formBody) {
+         const section = new Section();
+         section.title = sectionData.title;
+         section.form = savedForm;
+         const savedSection = await this.sectionRepository.save(section);
+
+         for (const card of sectionData.cards) {
+            card.section = savedSection;
+
+            if (card.addImg) {
+               let imagePaths = [];
+               if (Array.isArray(card.imageUrl)) {
+                  const imagePathsForCard = await Promise.all(card.imageUrl.map(async (imageBase64) => {
+                     return await this.saveImage(imageBase64, savedForm.id);
+                  }));
+                  imagePaths = imagePathsForCard;
+               } else {
+                  const imagePath = await this.saveImage(card.imageUrl, savedForm.id);
+                  imagePaths.push(imagePath);
+               }
+               card.imageUrl = imagePaths.join(',');
+            }
+
+            const savedCard = await this.cardRepository.save(card);
+
+            if (card.subQuestions && card.subQuestions.length > 0) {
+               for (const subQuestion of card.subQuestions) {
+                  subQuestion.card = savedCard;
+                  if (subQuestion.addImg) {
+                     let imagePaths = [];
+                     if (Array.isArray(subQuestion.imageUrl)) {
+                        const imagePathsForCard = await Promise.all(subQuestion.imageUrl.map(async (imageBase64) => {
+                           return await this.saveImage(imageBase64, savedForm.id);
+                        }));
+                        imagePaths = imagePathsForCard;
+                     } else {
+                        const imagePath = await this.saveImage(subQuestion.imageUrl, savedForm.id);
+                        imagePaths.push(imagePath);
+                     }
+                     subQuestion.imageUrl = imagePaths.join(',');
+                  }
+                  await this.subQuestionRepository.save(subQuestion);
+               }
+            }
          }
-         await this.cardRepository.save(card);
       }
       return { formId: String(savedForm.id) };
    }
+
 
    // Функция для удаления префикса
    async extractBase64String(imageBase64: string) {
       const base64Index = imageBase64.indexOf(';base64,') + 8;
       return imageBase64.substring(base64Index);
    }
+
 
    async saveImage(imageBase64: string, formId: string): Promise<string> {
       if (!imageBase64) {
@@ -51,22 +97,27 @@ export class FormsService {
       }
       const base64String = await this.extractBase64String(imageBase64);
       const imageBuffer = Buffer.from(base64String, 'base64');
-      const projectRoot = path.resolve(__dirname, '../../'); 
-      const imagePath = path.join(projectRoot, 'UsersImage', `${formId}.png`);
-      
+      const projectRoot = path.resolve(__dirname, '../../');
+      const uniqueId = uuidv4();
+      const imagePath = path.join(projectRoot, 'UsersImage', `${formId}_${uniqueId}.png`);
+
       const dir = path.dirname(imagePath);
+      console.log('Saving image to:', imagePath);
       if (!fs.existsSync(dir)) {
+         console.log('Creating directory:', dir);
          fs.mkdirSync(dir, { recursive: true });
       }
-   
       try {
          await fs.promises.writeFile(imagePath, imageBuffer);
+         console.log('Image saved successfully:', imagePath);
          return imagePath;
       } catch (error) {
          console.error('Error saving image:', error);
          return '';
       }
+
    }
+
 
    async getFormWithCards(formId: string): Promise<Form> {
       return this.formRepository

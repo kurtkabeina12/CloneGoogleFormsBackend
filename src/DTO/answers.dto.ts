@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "t
 import { ApiProperty } from "@nestjs/swagger";
 import { Users } from "./users.dto";
 import { Card } from "./card.dto";
+import { subQuestions } from "./subQuestion.dto";
 
 @Entity()
 export class Answers {
@@ -34,6 +35,10 @@ export class Answers {
     @JoinColumn({ name: 'idQuestion' }) 
     card: Card;
 
+    // In subQuestion entity
+    @ManyToOne(() => subQuestions, subQuestion => subQuestion.answers)
+    @JoinColumn({ name: 'idSubQuestion' }) 
+    subQuestion: subQuestions;
 
     @Column('simple-array')
     @ApiProperty({ type: () => [String] })

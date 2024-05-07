@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Card } from './card.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { Section } from './section.dto';
 
 @Entity()
 export class Form {
@@ -10,7 +10,19 @@ export class Form {
 
  @Column()
  @ApiProperty()
- formHeader: string;
+ formTitle: string;
+
+ @Column()
+ @ApiProperty()
+ formOverview: string;
+ 
+ @Column()
+ @ApiProperty()
+ formEndText: string;
+
+ @Column()
+ @ApiProperty()
+ formEndDate: string;
 
  @Column()
  @ApiProperty()
@@ -20,7 +32,7 @@ export class Form {
  @ApiProperty()
  selectedColor: string;
 
- @OneToMany(() => Card, card => card.form)
+ @OneToMany(() => Section, section => section.form)
  @ApiProperty()
- cards: Card[];
+ sections: Section[];
 }

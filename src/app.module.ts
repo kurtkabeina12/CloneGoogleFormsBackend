@@ -11,6 +11,10 @@ import { getFormDataController } from './controllers/getFormData.controller';
 import { getFormsDataService } from './service/getFormData.service';
 import { getFormsController } from './controllers/getForms.controller';
 import { getFormsService } from './service/getForms.service';
+import { Section } from './DTO/section.dto';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { subQuestions } from './DTO/subQuestion.dto';
 
 @Module({
  imports: [
@@ -20,11 +24,15 @@ import { getFormsService } from './service/getForms.service';
       port: 5000,
       password: '122712',
       username: 'postgres',
-      entities: [Card, Form, Answers, Users], 
+      entities: [Card, Section, subQuestions, Form, Answers, Users], 
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Card, Form, Answers, Users]), 
+    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users]),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'UsersImage'),
+      serveRoot: '/UsersImage',
+    }),
  ],
  controllers: [FormsController, getFormDataController, getFormsController],
  providers: [FormsService, getFormsDataService, getFormsService],

@@ -2,8 +2,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Answers } from './answers.dto';
-import { Section } from './section.dto';
-import { subQuestions } from './subQuestion.dto';
+import { Card } from './card.dto';
 
 export enum ComponentType {
    Input = 'Input',
@@ -15,10 +14,10 @@ export enum ComponentType {
 }
 
 @Entity()
-export class Card {
+export class subQuestions {
 
    @PrimaryGeneratedColumn('uuid')
-   idQuestion: string
+   idSubQuestion: string
 
    @Column({
       type: 'enum',
@@ -66,20 +65,15 @@ export class Card {
    @ApiProperty()
    addChangeCardsLogic: boolean;
 
-   @Column({
-      type: 'simple-array',
-   })
-   @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
-   changeCardsLogic: string | string[];
+   @Column()
+   @ApiProperty()
+   subQuestions: string;
 
-   @ManyToOne(() => Section, section => section.cards)
-   section: Section;
-
-   @OneToMany(() => subQuestions, subQuestion => subQuestion.card)
-   subQuestions: subQuestions[];
+   @ManyToOne(() => Card, card => card.subQuestions)
+   card: Card;
 
    // In Card entity
-   @OneToMany(() => Answers, answers => answers.card)
+   @OneToMany(() => Answers, answers => answers.subQuestion)
    answers: Answers[];
 
 }

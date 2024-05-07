@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Card } from 'src/DTO/card.dto';
-import { Form } from 'src/DTO/form.dto';
+import { Section } from 'src/DTO/section.dto';
 import { FormsService } from 'src/service/form.service';
 
 @ApiTags('forms')
@@ -12,15 +12,16 @@ export class FormsController {
 
    @Post()
    @ApiBody({ type: [Card] })
-   async saveForm(@Body() body: { formHead: string, formBody: Card[], isMandatoryAuth: boolean, selectedColor:string }): Promise<any> {
-      const { formHead, formBody, isMandatoryAuth, selectedColor } = body;
-      const formId = await this.formsService.saveForm(formHead, formBody, isMandatoryAuth, selectedColor);
+   async saveForm(@Body() body: { formTitle: string, formOverview: string, formEndText: string, formEndDate:string, formBody: Section[], isMandatoryAuth: boolean, selectedColor:string }): Promise<any> {
+      const { formTitle, formOverview, formEndText, formEndDate, formBody, isMandatoryAuth, selectedColor } = body;
+      console.log(body)
+      const formId = await this.formsService.saveForm( formTitle, formOverview, formEndText, formEndDate, formBody, isMandatoryAuth, selectedColor );
       return { formId };
    }
 
-   @Get(':id')
-   async getForm(@Param('id') formId: string): Promise<Form> {
-      return this.formsService.getFormWithCards(formId);
-   }
+   // @Get(':id')
+   // async getForm(@Param('id') formId: string): Promise<Form> {
+   //    return this.formsService.getFormWithCards(formId);
+   // }
 
 }
