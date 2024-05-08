@@ -72,6 +72,9 @@ export class Card {
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
    changeCardsLogic: string | string[];
 
+   @Column({ type: 'int', nullable: true })
+   order: number;
+
    @ManyToOne(() => Section, section => section.cards)
    section: Section;
 

@@ -38,10 +38,11 @@ export class FormsService {
          section.title = sectionData.title;
          section.form = savedForm;
          const savedSection = await this.sectionRepository.save(section);
+         let currentOrder = 1;
 
          for (const card of sectionData.cards) {
             card.section = savedSection;
-
+            card.order = currentOrder++;
             if (card.addImg) {
                let imagePaths = [];
                if (Array.isArray(card.imageUrl)) {
@@ -121,38 +122,20 @@ export class FormsService {
 
    async getFormWithCards(formId: string): Promise<Form> {
       const form = await this.formRepository
-          .createQueryBuilder('form')
-          .where('form.id = :formId', { formId })
-          .getOne();
-     
+         .createQueryBuilder('form')
+         .leftJoinAndSelect('form.sections', 'section')
+         .leftJoinAndSelect('section.cards', 'card')
+         .leftJoinAndSelect('card.subQuestions', 'subQuestion')
+         .where('form.id = :formId', { formId })
+         .orderBy('card.order', 'ASC')
+         .getOne();
+
       if (!form) {
-          throw new Error('Form not found');
+         throw new Error('Form not found');
       }
-     
-      const sections = await this.sectionRepository
-          .createQueryBuilder('section')
-          .leftJoin('section.form', 'form') // Изменено на leftJoin
-          .where('section.formId = :formId', { formId })
-          .getMany();
-     
-      for (const section of sections) {
-          section.cards = await this.cardRepository
-             .createQueryBuilder('card')
-             .leftJoinAndSelect('card.subQuestions', 'subQuestion')
-             .where('card.sectionId = :sectionId', { sectionId: section.id })
-             .getMany();
-     
-          for (const card of section.cards) {
-             card.subQuestions = await this.subQuestionRepository
-                .createQueryBuilder('subQuestion')
-                .leftJoinAndSelect('subQuestion.card', 'card')
-                .where('card.idQuestion = :cardId', { cardId: card.idQuestion })
-                .getMany();
-          }
-      }
-     
-      form.sections = sections;
-     
+
       return form;
-     }
+   }
+
+
 }
