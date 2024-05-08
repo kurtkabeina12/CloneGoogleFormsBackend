@@ -120,10 +120,39 @@ export class FormsService {
 
 
    async getFormWithCards(formId: string): Promise<Form> {
-      return this.formRepository
-         .createQueryBuilder('form')
-         .leftJoinAndSelect('form.cards', 'card')
-         .where('form.id = :formId', { formId })
-         .getOne();
-   }
+      const form = await this.formRepository
+          .createQueryBuilder('form')
+          .where('form.id = :formId', { formId })
+          .getOne();
+     
+      if (!form) {
+          throw new Error('Form not found');
+      }
+     
+      const sections = await this.sectionRepository
+          .createQueryBuilder('section')
+          .leftJoin('section.form', 'form') // Изменено на leftJoin
+          .where('section.formId = :formId', { formId })
+          .getMany();
+     
+      for (const section of sections) {
+          section.cards = await this.cardRepository
+             .createQueryBuilder('card')
+             .leftJoinAndSelect('card.subQuestions', 'subQuestion')
+             .where('card.sectionId = :sectionId', { sectionId: section.id })
+             .getMany();
+     
+          for (const card of section.cards) {
+             card.subQuestions = await this.subQuestionRepository
+                .createQueryBuilder('subQuestion')
+                .leftJoinAndSelect('subQuestion.card', 'card')
+                .where('card.idQuestion = :cardId', { cardId: card.idQuestion })
+                .getMany();
+          }
+      }
+     
+      form.sections = sections;
+     
+      return form;
+     }
 }

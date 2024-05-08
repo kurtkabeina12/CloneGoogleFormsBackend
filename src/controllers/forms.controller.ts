@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Card } from 'src/DTO/card.dto';
+import { Form } from 'src/DTO/form.dto';
 import { Section } from 'src/DTO/section.dto';
 import { FormsService } from 'src/service/form.service';
 
@@ -19,9 +20,9 @@ export class FormsController {
       return { formId };
    }
 
-   // @Get(':id')
-   // async getForm(@Param('id') formId: string): Promise<Form> {
-   //    return this.formsService.getFormWithCards(formId);
-   // }
+   @Get(':id')
+   async getForm(@Param('id') formId: string): Promise<Form> {
+      return this.formsService.getFormWithCards(formId);
+   }
 
 }
