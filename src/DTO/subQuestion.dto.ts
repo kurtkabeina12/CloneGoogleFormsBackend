@@ -64,6 +64,9 @@ export class subQuestions {
    @Column({ default: false})
    @ApiProperty()
    addChangeCardsLogic: boolean;
+   
+   @Column({ type: 'int', nullable: true })
+   order: number;
 
    @Column()
    @ApiProperty()

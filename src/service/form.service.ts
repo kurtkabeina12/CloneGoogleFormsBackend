@@ -58,10 +58,12 @@ export class FormsService {
             }
 
             const savedCard = await this.cardRepository.save(card);
+            let currentSubOrder = 1;
 
             if (card.subQuestions && card.subQuestions.length > 0) {
                for (const subQuestion of card.subQuestions) {
                   subQuestion.card = savedCard;
+                  card.order = currentSubOrder++;
                   if (subQuestion.addImg) {
                      let imagePaths = [];
                      if (Array.isArray(subQuestion.imageUrl)) {
@@ -128,6 +130,7 @@ export class FormsService {
          .leftJoinAndSelect('card.subQuestions', 'subQuestion')
          .where('form.id = :formId', { formId })
          .orderBy('card.order', 'ASC')
+         .orderBy('subQuestion.order', 'ASC')
          .getOne();
 
       if (!form) {
