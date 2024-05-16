@@ -21,13 +21,21 @@ export class getFormsService {
 
     ) { }
 
-    // async getAllForms() {
-    //     const forms = await this.formsRepository.find({
-    //         select: ["id", "formHeader"]
-    //     });
-    //     console.log(forms);
-    //     return forms;
-    // }
+    async getAllForms() {
+        const forms = await this.formsRepository.find({
+            select: ["id", "formTitle", "formEndDate"]
+        });
+        console.log(forms);
+        return forms;
+    }
+
+    async getFormInfo(formId: string) {
+        const formInfo = await this.formsRepository.findOne({
+            where: { id: formId },
+            select: ["formEndText", "selectedColor"]
+        });
+        return formInfo;
+    }
 
     // async getFormReport(formId: string): Promise<FormReportDTO> {
     //     console.log(formId)

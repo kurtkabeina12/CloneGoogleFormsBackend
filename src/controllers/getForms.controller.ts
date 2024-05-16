@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Controller} from "@nestjs/common";
+import { Controller, Get, Param, Post} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Form } from "src/DTO/form.dto";
 // import { FormReportDTO } from "src/DTO/formReport.dto";
 import { getFormsService } from "src/service/getForms.service";
 
@@ -9,10 +10,15 @@ import { getFormsService } from "src/service/getForms.service";
 export class getFormsController{
     constructor(private readonly formsService: getFormsService) { }
 
-    // @Post()
-    // async getAllForms(){
-    //     return this.formsService.getAllForms();
-    // }
+    @Post()
+    async getAllForms(){
+        return this.formsService.getAllForms();
+    }
+
+    @Get(':id')
+    async getFormInfo(@Param('id') formId: string): Promise<Form>{
+        return this.formsService.getFormInfo(formId);
+    }
 
     // @Get(':id')
     // async getForm(@Param('id') formId: string): Promise<FormReportDTO> {
