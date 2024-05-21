@@ -19,4 +19,7 @@ export class Section {
  @OneToMany(() => Card, card => card.section)
  cards: Card[];
 
+ @Column({ type: 'int', nullable: true })
+ order: number;
+
 }

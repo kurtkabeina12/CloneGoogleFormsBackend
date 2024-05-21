@@ -32,11 +32,13 @@ export class FormsService {
       form.isMandatoryAuth = isMandatoryAuth;
       form.selectedColor = selectedColor;
       const savedForm = await this.formRepository.save(form);
+      let currentSectionOrder = 1;
 
       for (const sectionData of formBody) {
          const section = new Section();
          section.title = sectionData.title;
          section.form = savedForm;
+         section.order = currentSectionOrder++; 
          const savedSection = await this.sectionRepository.save(section);
          let currentOrder = 1;
 
@@ -63,7 +65,7 @@ export class FormsService {
             if (card.subQuestions && card.subQuestions.length > 0) {
                for (const subQuestion of card.subQuestions) {
                   subQuestion.card = savedCard;
-                  card.order = currentSubOrder++;
+                  subQuestion.order = currentSubOrder++;
                   if (subQuestion.addImg) {
                      let imagePaths = [];
                      if (Array.isArray(subQuestion.imageUrl)) {
@@ -129,16 +131,29 @@ export class FormsService {
          .leftJoinAndSelect('section.cards', 'card')
          .leftJoinAndSelect('card.subQuestions', 'subQuestion')
          .where('form.id = :formId', { formId })
-         .orderBy('card.order', 'ASC')
-         .orderBy('subQuestion.order', 'ASC')
-         .getOne();
-
-      if (!form) {
-         throw new Error('Form not found');
+         .getMany(); // Получаем все формы сразу, так как дальнейшая сортировка будет происходить в памяти
+  
+      if (!form ||!form.length) {
+          throw new Error('Form not found');
       }
-
-      return form;
-   }
-
+  
+      // Сортируем секции по порядку
+      form[0].sections.sort((a, b) => a.order - b.order);
+  
+      // Затем сортируем карты внутри секций
+      form[0].sections.forEach(section => {
+          section.cards.sort((a, b) => a.order - b.order);
+      });
+  
+      // Наконец, сортируем подкарты внутри карт
+      form[0].sections.forEach(section => {
+          section.cards.forEach(card => {
+              card.subQuestions.sort((a, b) => a.order - b.order);
+          });
+      });
+  
+      return form[0];
+  }
+  
 
 }
