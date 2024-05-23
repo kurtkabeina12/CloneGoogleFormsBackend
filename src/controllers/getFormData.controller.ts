@@ -13,9 +13,9 @@ export class getFormDataController {
     @ApiBody({type: [Form]})
     async handleFormData(@Body() body: any) {
         console.log(body, 'Received form data');
-        // const formData = body.formData;
-        // const formId = body.formId;
-        // await this.formsDataService.saveAnswers(formData, formId);
+        const formData = body.formData;
+        const formId = body.formId;
+        await this.formsDataService.saveAnswers(formData, formId);
         // await this.formsDataService.getUserQuestionsAndAnswers(1);
         return { message: 'Data received successfully' };
     }

@@ -15,6 +15,9 @@ import { Section } from './DTO/section.dto';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { subQuestions } from './DTO/subQuestion.dto';
+import { getFormReportService } from './service/getFormReport.service';
+import { getFormReportController } from './controllers/getFormReport.controller';
+import { FormReportDTO } from './DTO/formReport.dto';
 
 @Module({
  imports: [
@@ -24,17 +27,17 @@ import { subQuestions } from './DTO/subQuestion.dto';
       port: 5000,
       password: '122712',
       username: 'postgres',
-      entities: [Card, Section, subQuestions, Form, Answers, Users], 
+      entities: [Card, Section, subQuestions, Form, Answers, Users, FormReportDTO], 
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users]),
+    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users, FormReportDTO]),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'UsersImage'),
       serveRoot: '/UsersImage',
     }),
  ],
- controllers: [FormsController, getFormDataController, getFormsController],
- providers: [FormsService, getFormsDataService, getFormsService],
+ controllers: [FormsController, getFormDataController, getFormsController, getFormReportController],
+ providers: [FormsService, getFormsDataService, getFormsService, getFormReportService],
 })
 export class AppModule {}

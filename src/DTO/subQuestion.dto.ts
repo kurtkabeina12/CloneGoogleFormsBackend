@@ -75,7 +75,6 @@ export class subQuestions {
    @ManyToOne(() => Card, card => card.subQuestions)
    card: Card;
 
-   // In Card entity
    @OneToMany(() => Answers, answers => answers.subQuestion)
    answers: Answers[];
 

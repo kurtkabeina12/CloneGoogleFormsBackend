@@ -19,9 +19,13 @@ export class Answers {
     @ApiProperty()
     idForm: string;
 
-    @Column()
+    @Column({nullable: true})
     @ApiProperty()
     idQuestion: string;
+
+    @Column({nullable: true})
+    @ApiProperty()
+    idSubQuestion: string;
 
     // Отношение к Users
     @ManyToOne(() => Users, user => user.answers, {

@@ -2,7 +2,6 @@
 import { Controller, Get, Param, Post} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Form } from "src/DTO/form.dto";
-// import { FormReportDTO } from "src/DTO/formReport.dto";
 import { getFormsService } from "src/service/getForms.service";
 
 @ApiTags('getForms')
@@ -19,9 +18,5 @@ export class getFormsController{
     async getFormInfo(@Param('id') formId: string): Promise<Form>{
         return this.formsService.getFormInfo(formId);
     }
-
-    // @Get(':id')
-    // async getForm(@Param('id') formId: string): Promise<FormReportDTO> {
-    //    return this.formsService.getFormReport(formId);
-    // }
 }
+
