@@ -27,49 +27,49 @@ export class getFormsDataService {
 		const user = this.usersRepository.create({ phoneNumber });
 		return this.usersRepository.save(user);
 	}
-	
+
 	async saveAnswers(formData: any, formId: string): Promise<void> {
 		const { registerPhone } = formData;
 		console.log(formData, registerPhone, "formData and registerPhone");
 		if (registerPhone) {
 			await this.savePhoneNumber(registerPhone)
 			let user = await this.usersRepository.findOne({ where: { phoneNumber: registerPhone } });
-	
+
 			if (!user) {
 				user = this.usersRepository.create({ phoneNumber: registerPhone });
 				await this.usersRepository.save(user);
 			}
-	
+
 			for (const [idQuestion, answer] of Object.entries(formData)) {
-				if (idQuestion!== 'registerPhone') {
-					const filteredAnswers = Array.isArray(answer)? answer.filter(a => a!== "null" && a!== null) : [answer];
-					let idField = 'idQuestion'; 
-	
+				if (idQuestion !== 'registerPhone') {
+					const filteredAnswers = Array.isArray(answer) ? answer.filter(a => a !== "null" && a !== null) : [answer];
+					let idField = 'idQuestion';
+
 					if (idQuestion.includes('card')) {
 						idField = 'idQuestion';
 					} else if (idQuestion.includes('subCard')) {
 						idField = 'idSubQuestion';
 					}
-	
+
 					const idPart = idQuestion.split(':').shift().trim();
 
 					const answerEntity = this.answersRepository.create({
 						phoneNumber: registerPhone,
 						idForm: formId,
 						user: user,
-						[idField]: idPart, 
+						[idField]: idPart,
 						answers: filteredAnswers,
 					});
 					console.log(answerEntity, 'answerEntity');
-					await this.answersRepository.save(answerEntity); 
+					await this.answersRepository.save(answerEntity);
 				}
 			}
-	
+
 		} else {
 			for (const [idQuestion, answer] of Object.entries(formData)) {
-				const filteredAnswers = Array.isArray(answer)? answer.filter(a => a!== "null" && a!== null) : [answer];
+				const filteredAnswers = Array.isArray(answer) ? answer.filter(a => a !== "null" && a !== null) : [answer];
 				let idField = 'idQuestion';
-	
+
 				if (idQuestion.includes('card')) {
 					idField = 'idQuestion';
 				} else if (idQuestion.includes('subCard')) {
@@ -77,19 +77,19 @@ export class getFormsDataService {
 				}
 
 				const idPart = idQuestion.split(':').shift().trim();
-	
+
 				const answerEntity = this.answersRepository.create({
 					idForm: formId,
-					[idField]: idPart, 
+					[idField]: idPart,
 					answers: filteredAnswers
 				});
 				console.log(answerEntity, 'answerEntity');
-	
-				await this.answersRepository.save(answerEntity); 
+
+				await this.answersRepository.save(answerEntity);
 			}
 		}
 	}
-	
+
 	async getUserQuestionsAndAnswers(userId: number): Promise<any> {
 		const userQuestionsAndAnswers = await this.answersRepository
 			.createQueryBuilder("answers")

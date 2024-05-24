@@ -35,7 +35,7 @@ export class getFormReportService {
 
 		const formInfo = await this.formsRepository.find({
 			where: { id: formId },
-			select: ["formTitle", "formEndDate"]
+			select: ["formTitle", "selectedColor", "formEndDate"]
 		})
 
 		form.push(...formInfo);
@@ -53,7 +53,7 @@ export class getFormReportService {
 		for (const section of sections) {
 			const sectionQuestions = await this.cardsRepository.find({
 				where: { section: { id: section.id } },
-				select: ["idQuestion", "question"]
+				select: ["idQuestion", "question", "selectedComponent", "answer"]
 			});
 
 			questions.push(...sectionQuestions);
@@ -61,7 +61,7 @@ export class getFormReportService {
 			for (const question of sectionQuestions) {
 				const questionSubQuestions = await this.subQuestionsRepository.find({
 					where: { card: { idQuestion: question.idQuestion } },
-					select: ["idSubQuestion", "question"]
+					select: ["idSubQuestion", "question", "selectedComponent", "answer"]
 				});
 
 				subQuestions.push(...questionSubQuestions);
