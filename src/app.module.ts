@@ -18,6 +18,13 @@ import { subQuestions } from './DTO/subQuestion.dto';
 import { getFormReportService } from './service/getFormReport.service';
 import { getFormReportController } from './controllers/getFormReport.controller';
 import { FormReportDTO } from './DTO/formReport.dto';
+import { Test } from './DTO/test.dto';
+import { SectionTest } from './DTO/sectionTest.dto';
+import { CardTest } from './DTO/cardTest.dto';
+import { subQuestionsTest } from './DTO/subQuestionTest.dto';
+import { AnswersTest } from './DTO/answertsTest.dto';
+import { TestsController } from './controllers/tests.controller';
+import { TestsService } from './service/test.service';
 
 @Module({
  imports: [
@@ -27,17 +34,17 @@ import { FormReportDTO } from './DTO/formReport.dto';
       port: 5000,
       password: '122712',
       username: 'postgres',
-      entities: [Card, Section, subQuestions, Form, Answers, Users, FormReportDTO], 
+      entities: [Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest], 
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users, FormReportDTO]),
+    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest]),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'UsersImage'),
       serveRoot: '/UsersImage',
     }),
  ],
- controllers: [FormsController, getFormDataController, getFormsController, getFormReportController],
- providers: [FormsService, getFormsDataService, getFormsService, getFormReportService],
+ controllers: [FormsController, getFormDataController, getFormsController, getFormReportController, TestsController],
+ providers: [FormsService, getFormsDataService, getFormsService, getFormReportService, TestsService],
 })
 export class AppModule {}

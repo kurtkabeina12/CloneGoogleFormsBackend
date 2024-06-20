@@ -30,7 +30,8 @@ export class getFormsDataService {
 
 	async saveAnswers(formData: any, formId: string): Promise<void> {
 		const { registerPhone } = formData;
-		console.log(formData, registerPhone, "formData and registerPhone");
+		console.log(formId, registerPhone, "formData and registerPhone");
+		console.log(formData, 'formData');
 		if (registerPhone) {
 			await this.savePhoneNumber(registerPhone)
 			let user = await this.usersRepository.findOne({ where: { phoneNumber: registerPhone } });

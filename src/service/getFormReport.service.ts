@@ -7,6 +7,7 @@ import { Form } from "src/DTO/form.dto";
 import { FormReportDTO } from "src/DTO/formReport.dto";
 import { Section } from "src/DTO/section.dto";
 import { subQuestions } from "src/DTO/subQuestion.dto";
+import { Users } from "src/DTO/users.dto";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -26,6 +27,9 @@ export class getFormReportService {
 
 		@InjectRepository(subQuestions)
 		private subQuestionsRepository: Repository<subQuestions>,
+
+		@InjectRepository(Users)
+		private usersRepository: Repository<Users>,
 
 	) { }
 
@@ -73,7 +77,7 @@ export class getFormReportService {
 		const answers = await this.answersRepository.createQueryBuilder("answer")
 			.where("answer.idQuestion IN (:...combinedIds)", { combinedIds })
 			.orWhere("answer.idSubQuestion IN (:...combinedIds)", { combinedIds })
-			.select(["answer.idQuestion", "answer.idSubQuestion", "answer.answers"])
+			.select(["answer.idQuestion", "answer.idSubQuestion", "answer.answers", "answer.phoneNumber"])
 			.getMany();
 
 
