@@ -4,6 +4,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { SectionTest } from './sectionTest.dto';
 import { subQuestionsTest } from './subQuestionTest.dto';
 import { AnswersTest } from './answertsTest.dto';
+import { checkPointsTest } from './checkPointsTest.dto';
 
 export enum ComponentType {
     Input = 'Input',
@@ -84,5 +85,9 @@ export class CardTest {
     // In Card entity
     @OneToMany(() => AnswersTest, answers => answers.card)
     answers: AnswersTest[];
+
+    // In Card entity
+    @OneToMany(() => checkPointsTest, checkPointTest => checkPointTest.card)
+    checkpointTest: checkPointsTest[];
 
 }

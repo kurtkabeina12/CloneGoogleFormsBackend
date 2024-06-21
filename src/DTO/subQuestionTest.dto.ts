@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CardTest } from './cardTest.dto';
 import { AnswersTest } from './answertsTest.dto';
+import { checkPointsTest } from './checkPointsTest.dto';
 
 export enum ComponentType {
    Input = 'Input',
@@ -40,27 +41,27 @@ export class subQuestionsTest {
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
    answer: string | string[];
 
-   @Column({ default: false})
+   @Column({ default: false })
    @ApiProperty()
    addImg: boolean;
 
    @Column('json', { nullable: true })
    imageUrl: string | string[];
 
-   @Column({ default: false})
+   @Column({ default: false })
    @ApiProperty()
    addChangeCardsLogic: boolean;
-   
+
    @Column({ type: 'integer', nullable: true })
    @ApiProperty({ type: 'integer' })
    points: number;
 
    @Column({
-       type: 'simple-array',
+      type: 'simple-array',
    })
    @ApiProperty({ oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] })
    correctAnswer: string | string[];
-   
+
    @Column({ type: 'int', nullable: true })
    order: number;
 
@@ -73,5 +74,9 @@ export class subQuestionsTest {
 
    @OneToMany(() => AnswersTest, answers => answers.subQuestion)
    answers: AnswersTest[];
+
+   // In Card entity
+   @OneToMany(() => checkPointsTest, checkPointTest => checkPointTest.subQuestion)
+   checkpointTest: checkPointsTest[];
 
 }

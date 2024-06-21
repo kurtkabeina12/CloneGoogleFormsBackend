@@ -29,7 +29,6 @@ export class TestsService {
 		test.testOverview = testOverview;
 		test.testEndText = testEndText;
 		test.testEndDate = testEndDate;
-		test.isMandatoryAuth = isMandatoryAuth;
 		test.selectedColor = selectedColor;
 		const savedTest = await this.testRepository.save(test);
 		let currentSectionOrder = 1;

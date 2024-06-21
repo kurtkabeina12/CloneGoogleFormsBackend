@@ -26,10 +26,6 @@ export class Test {
 
  @Column()
  @ApiProperty()
- isMandatoryAuth: boolean;
-
- @Column()
- @ApiProperty()
  selectedColor: string;
 
  @OneToMany(() => SectionTest, section => section.test)

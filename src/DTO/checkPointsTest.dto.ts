@@ -1,19 +1,19 @@
 /* eslint-disable prettier/prettier */
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { Users } from "./users.dto";
 import { CardTest } from "./cardTest.dto";
 import { subQuestionsTest } from "./subQuestionTest.dto";
-import { UsersEmails } from "./usersEmail.dto";
 
 @Entity()
-export class AnswersTest {
+export class checkPointsTest {
 
     @PrimaryGeneratedColumn()
-    idAnswer: number;
+    order: number;
 
     @Column({ nullable: true })
     @ApiProperty()
-    registerEmail: string;
+    userEmail: string;
 
     @Column()
     @ApiProperty()
@@ -27,24 +27,28 @@ export class AnswersTest {
     @ApiProperty()
     idSubQuestion: string;
 
+    @Column('simple-array')
+    @ApiProperty({ type: () => [String] })
+    answers: string | string[];
+
+    @Column()
+    @ApiProperty()
+    totalPoints: number;
+
     // Отношение к Users
-    @ManyToOne(() => UsersEmails, userEmail => userEmail.answers, {
+    @ManyToOne(() => Users, user => user.answers, {
         createForeignKeyConstraints: false,
     })
     @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-    userEmail: UsersEmails;
+    user: Users;
 
     // In Answers entity
-    @ManyToOne(() => CardTest, card => card.answers)
+    @ManyToOne(() => CardTest, card => card.checkpointTest)
     @JoinColumn({ name: 'idQuestion' })
     card: CardTest;
 
     // In subQuestion entity
-    @ManyToOne(() => subQuestionsTest, subQuestion => subQuestion.answers)
+    @ManyToOne(() => subQuestionsTest, subQuestion => subQuestion.checkpointTest)
     @JoinColumn({ name: 'idSubQuestion' })
     subQuestion: subQuestionsTest;
-
-    @Column('simple-array')
-    @ApiProperty({ type: () => [String] })
-    answers: string | string[];
 }

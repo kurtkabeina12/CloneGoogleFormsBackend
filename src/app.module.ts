@@ -25,6 +25,10 @@ import { subQuestionsTest } from './DTO/subQuestionTest.dto';
 import { AnswersTest } from './DTO/answertsTest.dto';
 import { TestsController } from './controllers/tests.controller';
 import { TestsService } from './service/test.service';
+import { checkPointsTest } from './DTO/checkPointsTest.dto';
+import { getTestDataController } from './controllers/getTestData.controller';
+import { getTestDataService } from './service/getTestData.service';
+import { UsersEmails } from './DTO/usersEmail.dto';
 
 @Module({
  imports: [
@@ -34,17 +38,17 @@ import { TestsService } from './service/test.service';
       port: 5000,
       password: '122712',
       username: 'postgres',
-      entities: [Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest], 
+      entities: [Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest, checkPointsTest, UsersEmails], 
       synchronize: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest]),
+    TypeOrmModule.forFeature([Card, Section, subQuestions, Form, Answers, Users, FormReportDTO, Test, SectionTest, CardTest, subQuestionsTest, AnswersTest, checkPointsTest, UsersEmails]),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'UsersImage'),
       serveRoot: '/UsersImage',
     }),
  ],
- controllers: [FormsController, getFormDataController, getFormsController, getFormReportController, TestsController],
- providers: [FormsService, getFormsDataService, getFormsService, getFormReportService, TestsService],
+ controllers: [FormsController, getFormDataController, getFormsController, getFormReportController, TestsController, getTestDataController],
+ providers: [FormsService, getFormsDataService, getFormsService, getFormReportService, TestsService, getTestDataService],
 })
 export class AppModule {}
