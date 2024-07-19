@@ -14,11 +14,14 @@ export class getTestDataController {
     async handleFormData(@Body() body: any) {
         console.log(body, 'Received form data');
         const testData = body.testData;
-        // const testId = body.testId;
+        const testId = body.testId;
 		const { registerEmail } = testData;
-        // await this.testsDataService.saveAnswers(testData, testId);
-        console.log(registerEmail, 'registerEmail');
-        await this.testsDataService.getEarnedPoints(registerEmail)
-        return { message: 'Data received successfully' };
+        await this.testsDataService.saveAnswers(testData, testId);
+        const totalPoints = await this.testsDataService.getEarnedPoints(registerEmail)
+        return { 
+            message: 'Data received successfully', 
+            totalPoints: totalPoints,
+            userEmail: registerEmail
+        };
     }
 }

@@ -29,6 +29,8 @@ import { checkPointsTest } from './DTO/checkPointsTest.dto';
 import { getTestDataController } from './controllers/getTestData.controller';
 import { getTestDataService } from './service/getTestData.service';
 import { UsersEmails } from './DTO/usersEmail.dto';
+import { getTestsController } from './controllers/getTests.controller';
+import { getTestsService } from './service/getTests.service';
 
 @Module({
  imports: [
@@ -48,7 +50,7 @@ import { UsersEmails } from './DTO/usersEmail.dto';
       serveRoot: '/UsersImage',
     }),
  ],
- controllers: [FormsController, getFormDataController, getFormsController, getFormReportController, TestsController, getTestDataController],
- providers: [FormsService, getFormsDataService, getFormsService, getFormReportService, TestsService, getTestDataService],
+ controllers: [FormsController, getFormDataController, getFormsController, getFormReportController, TestsController, getTestDataController, getTestsController],
+ providers: [FormsService, getFormsDataService, getFormsService, getFormReportService, TestsService, getTestDataService, getTestsService],
 })
 export class AppModule {}
