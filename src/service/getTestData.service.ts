@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswersTest } from "src/DTO/answertsTest.dto";
 import { CardTest } from "src/DTO/cardTest.dto";
@@ -28,8 +28,15 @@ export class getTestDataService {
 	) { }
 
 	async savePhoneNumber(registerEmail: string): Promise<UsersEmails> {
-		const user = this.usersEmailsRepository.create({ registerEmail });
-		return this.usersEmailsRepository.save(user);
+		// Проверяем, существует ли уже пользователь с таким registerEmail
+		const existingUser = await this.usersEmailsRepository.findOne({ where: { registerEmail } });
+		if (existingUser) {
+			// Возвращаем статус код 409 и сообщение об ошибке
+			throw new HttpException('User already exists', HttpStatus.CONFLICT);
+		} else {
+			const user = this.usersEmailsRepository.create({ registerEmail });
+			return this.usersEmailsRepository.save(user);
+		}
 	}
 
 	async saveAnswers(testData: any, testId: string): Promise<void> {
