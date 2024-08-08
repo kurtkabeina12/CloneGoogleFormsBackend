@@ -17,11 +17,15 @@ export class getTestDataController {
 		const testId = body.testId;
 		const { registerEmail } = testData;
 		await this.testsDataService.saveAnswers(testData, testId);
-		const totalPoints = await this.testsDataService.getEarnedPoints(registerEmail)
+		// const totalPoints = await this.testsDataService.getEarnedPoints(registerEmail, testId)
+		const checkPoints = await this.testsDataService.getUrlForCheckTestPoints(testId, registerEmail)
+		// const allPageForCheck = await this.testsDataService.getAllPointsForQuestions(testId, registerEmail)
 		return {
 			message: 'Data received successfully',
-			totalPoints: totalPoints,
-			userEmail: registerEmail
+			// totalPoints: totalPoints,
+			userEmail: registerEmail,
+			userId: checkPoints,
+			// allPageForCheck: allPageForCheck,
 		};
 	}
 }
