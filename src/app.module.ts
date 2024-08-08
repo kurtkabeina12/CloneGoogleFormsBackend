@@ -36,7 +36,7 @@ import { getTestsService } from './service/getTests.service';
  imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 5000,
       password: '122712',
       username: 'postgres',
