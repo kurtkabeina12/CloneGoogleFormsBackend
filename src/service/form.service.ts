@@ -22,29 +22,46 @@ export class FormsService {
       @InjectRepository(subQuestions)
       private subQuestionRepository: Repository<subQuestions>,
    ) { }
-
-   async saveForm(formTitle: string, formOverview: string, formEndText: string, formEndDate: string, formBody: Section[], isMandatoryAuth: boolean, selectedColor: string): Promise<{ formId: string }> {
+   async saveForm(
+      formTitle: string,
+      formOverview: string,
+      formEndText: string,
+      formEndDate: string,
+      formBody: Section[],
+      isMandatoryAuth: boolean,
+      selectedColor: string
+   ): Promise<{ formId: string }> {
       const form = new Form();
-      form.formTitle = formTitle;
-      form.formOverview = formOverview;
-      form.formEndText = formEndText;
-      form.formEndDate = formEndDate;
+      form.formTitle = this.escapeCommas(formTitle);
+      form.formOverview = this.escapeCommas(formOverview);
+      form.formEndText = this.escapeCommas(formEndText);
+      form.formEndDate = formEndDate; // Assuming this doesn't need escaping
       form.isMandatoryAuth = isMandatoryAuth;
       form.selectedColor = selectedColor;
+
       const savedForm = await this.formRepository.save(form);
       let currentSectionOrder = 1;
 
       for (const sectionData of formBody) {
          const section = new Section();
-         section.title = sectionData.title;
+         section.title = this.escapeCommas(sectionData.title);
          section.form = savedForm;
-         section.order = currentSectionOrder++; 
+         section.order = currentSectionOrder++;
          const savedSection = await this.sectionRepository.save(section);
          let currentOrder = 1;
 
          for (const card of sectionData.cards) {
             card.section = savedSection;
             card.order = currentOrder++;
+            console.log(card)
+            if (card.selectedComponent !== "Slider") {
+               if (Array.isArray(card.answer)) {
+                  card.answer = card.answer.map(answer => this.escapeCommas(answer.trim())).filter(answer => answer !== '');
+               } else if (typeof card.answer === 'string') {
+                  card.answer = this.escapeCommas(card.answer).split(',').map(answer => answer.trim()).filter(answer => answer !== '');
+               }
+            }
+            // Handle images
             if (card.addImg) {
                let imagePaths = [];
                if (Array.isArray(card.imageUrl)) {
@@ -66,6 +83,15 @@ export class FormsService {
                for (const subQuestion of card.subQuestions) {
                   subQuestion.card = savedCard;
                   subQuestion.order = currentSubOrder++;
+
+                  if (subQuestion.selectedComponent !== "Slider") {
+                     if (Array.isArray(subQuestion.answer)) {
+                        subQuestion.answer = subQuestion.answer.map(answer => this.escapeCommas(answer.trim())).filter(answer => answer !== '');
+                     } else if (typeof subQuestion.answer === 'string') {
+                        subQuestion.answer = this.escapeCommas(subQuestion.answer).split(',').map(answer => answer.trim()).filter(answer => answer !== '');
+                     }
+                  }
+
                   if (subQuestion.addImg) {
                      let imagePaths = [];
                      if (Array.isArray(subQuestion.imageUrl)) {
@@ -87,6 +113,10 @@ export class FormsService {
       return { formId: String(savedForm.id) };
    }
 
+   // Helper method to escape commas
+   private escapeCommas(value: string): string {
+      return value.replace(/,/g, '{comma}');
+   }
 
    // Функция для удаления префикса
    async extractBase64String(imageBase64: string) {
@@ -131,29 +161,48 @@ export class FormsService {
          .leftJoinAndSelect('section.cards', 'card')
          .leftJoinAndSelect('card.subQuestions', 'subQuestion')
          .where('form.id = :formId', { formId })
-         .getMany(); // Получаем все формы сразу, так как дальнейшая сортировка будет происходить в памяти
-  
-      if (!form ||!form.length) {
-          throw new Error('Form not found');
+         .getMany();
+
+      if (!form || !form.length) {
+         throw new Error('Form not found');
       }
-  
-      // Сортируем секции по порядку
+
+      // Sort sections, cards, and subQuestions
       form[0].sections.sort((a, b) => a.order - b.order);
-  
-      // Затем сортируем карты внутри секций
       form[0].sections.forEach(section => {
-          section.cards.sort((a, b) => a.order - b.order);
+         section.cards.sort((a, b) => a.order - b.order);
+         section.cards.forEach(card => {
+            card.subQuestions.sort((a, b) => a.order - b.order);
+
+            // Unescape answers for the main card
+            if (Array.isArray(card.answer)) {
+               card.answer = card.answer.map(answer => this.unescapeCommas(answer));
+            } else if (typeof card.answer === 'string') {
+               card.answer = this.unescapeCommas(card.answer);
+            }
+
+            // Unescape answers for subQuestions
+            card.subQuestions.forEach(subQuestion => {
+               if (Array.isArray(subQuestion.answer)) {
+                  subQuestion.answer = subQuestion.answer.map(answer => this.unescapeCommas(answer));
+               } else if (typeof subQuestion.answer === 'string') {
+                  subQuestion.answer = this.unescapeCommas(subQuestion.answer);
+               }
+            });
+         });
       });
-  
-      // Наконец, сортируем подкарты внутри карт
-      form[0].sections.forEach(section => {
-          section.cards.forEach(card => {
-              card.subQuestions.sort((a, b) => a.order - b.order);
-          });
-      });
-  
+
+      // Unescape other fields
+      form[0].formTitle = this.unescapeCommas(form[0].formTitle);
+      form[0].formOverview = this.unescapeCommas(form[0].formOverview);
+      form[0].formEndText = this.unescapeCommas(form[0].formEndText);
+      console.log(form[0]);
       return form[0];
-  }
-  
+   }
+
+   // Helper method to unescape commas
+   private unescapeCommas(value: string): string {
+      return value.replace(/{comma}/g, ',');
+   }
 
 }
